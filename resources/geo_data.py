@@ -32,3 +32,17 @@ class Geo_Data_By_Name(Resource):
             return make_response(jsonify({'data': data}), 200)
         except Exception as e:
             return make_response(jsonify({'error': e}), 500)
+
+
+class Geo_Data_Delete_By_Name(Resource):
+    service = None
+
+    def __init__(self):
+        self.service = Geo_Data_Service()
+
+    def delete(self, data_set_name):
+        try:
+            self.service.deleteDataSet(data_set_name)
+            return make_response(jsonify({}), 204)
+        except Exception as e:
+            return make_response(jsonify({'error': e}), 500)
