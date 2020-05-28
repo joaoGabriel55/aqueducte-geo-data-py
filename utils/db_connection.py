@@ -5,5 +5,4 @@ import psycopg2 as db
 def dbConnection():
     connection = db.connect(host=getDbHost(), database=getDbName(), port=getDbPort(),
                             user=getDbUser(), password=getDbPassword())
-    cur = connection.cursor()
-    return cur
+    return connection

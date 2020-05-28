@@ -13,8 +13,9 @@ class Geo_Data_Repository(object):
     def showAllDataSets(self):
         try:
             showTablesQuery = "SELECT * FROM pg_catalog.pg_tables WHERE schemaname = 'public'"
-            self.db.execute(showTablesQuery)
-            result = self.db.fetchall()
+            cursor = self.db.cursor()
+            cursor.execute(showTablesQuery)
+            result = cursor.fetchall()
 
             if result == None:
                 raise Data_Exception
@@ -31,12 +32,13 @@ class Geo_Data_Repository(object):
 
     def getDataSet(self, datasetName, geojsonField):
         try:
-            print(type(geojsonField))
             queryColumns = "SELECT column_name " +\
                 "FROM information_schema.columns " +\
                 "WHERE table_name = '" + datasetName + "'"
-            self.db.execute(queryColumns)
-            columns = self.db.fetchall()
+            
+            cursor = self.db.cursor()
+            cursor.execute(queryColumns)
+            columns = cursor.fetchall()
 
             if columns == None:
                 raise Data_Exception
@@ -48,11 +50,11 @@ class Geo_Data_Repository(object):
 
             if geojsonField != None:
                 response.remove(geojsonField)
-            
+
             columns = ','.join(response)
 
             query = None
-            if geojsonField != None or len(geojsonField)>0:
+            if geojsonField != None and len(geojsonField) > 0:
                 query = "SELECT row_to_json(row) FROM " + \
                     "(SELECT " + columns + ", ST_AsGeoJSON(" + geojsonField + \
                     ") as geojson FROM " + datasetName + ") row"
@@ -60,8 +62,8 @@ class Geo_Data_Repository(object):
                 query = "SELECT row_to_json(row) FROM " + \
                     "(SELECT " + columns + " FROM " + datasetName + ") row"
 
-            self.db.execute(query)
-            result = self.db.fetchall()
+            cursor.execute(query)
+            result = cursor.fetchall()
 
             if result == None:
                 raise Data_Exception
@@ -81,5 +83,12 @@ class Geo_Data_Repository(object):
             raise Data_Exception(
                 Exception('Error! into fetch data set ' + datasetName))
 
-    def deleteDataSet(self, parameter_list):
-        pass
+    def deleteDataSet(self, datasetName):
+        try:
+            dropTable = "DROP TABLE " + datasetName
+            cursor = self.db.cursor()
+            cursor.execute(dropTable)
+            self.db.commit()
+            self.db.close()
+        except Exception:
+            raise Data_Exception(Exception('Error! into delete dataset'))

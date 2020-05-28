@@ -20,4 +20,11 @@ class Geo_Data_Service(object):
             return self.repository.getDataSet(datasetName, geojsonField)
         except Exception:
             raise Data_Exception(
-                Exception("Error get data set " + datasetName))
+                Exception("Error get dataset " + datasetName))
+
+    def deleteDataSet(self, datasetName):
+        try:
+            return self.repository.deleteDataSet(datasetName)
+        except Exception:
+            raise Data_Exception(
+                Exception("Error delete dataset " + datasetName))
