@@ -19,3 +19,7 @@ def getDbPassword():
 
 def getDbName():
     return str(os.environ.get("DB_NAME"))
+
+
+def getAqueconnectUrl():
+    return str(os.environ.get("AQUECONNECT_URL"))

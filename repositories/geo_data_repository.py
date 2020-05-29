@@ -30,55 +30,45 @@ class Geo_Data_Repository(object):
         except Exception:
             raise Data_Exception(Exception('Error! into fetch all datasets'))
 
+    def getDataSetFields(self, datasetName):
+        queryColumns = "SELECT column_name " +\
+            "FROM information_schema.columns " +\
+            "WHERE table_name = '" + datasetName + "'"
+
+        cursor = self.db.cursor()
+        cursor.execute(queryColumns)
+        columns = cursor.fetchall()
+
+        if columns == None:
+            raise Data_Exception
+
+        response = []
+        for column in columns:
+            jsonStr = json.dumps(column, ensure_ascii=False)
+            response.append(json.loads(jsonStr)[0])
+
+        return response
+
     def getDataSet(self, datasetName, geojsonField):
         try:
-            queryColumns = "SELECT column_name " +\
-                "FROM information_schema.columns " +\
-                "WHERE table_name = '" + datasetName + "'"
-            
-            cursor = self.db.cursor()
-            cursor.execute(queryColumns)
-            columns = cursor.fetchall()
-
-            if columns == None:
-                raise Data_Exception
-
-            response = []
-            for column in columns:
-                jsonStr = json.dumps(column, ensure_ascii=False)
-                response.append(json.loads(jsonStr)[0])
-
-            if geojsonField != None:
-                response.remove(geojsonField)
+            response = self.getDataSetFields(datasetName)
+            response.remove(geojsonField)
 
             columns = ','.join(response)
 
-            query = None
-            if geojsonField != None and len(geojsonField) > 0:
-                query = "SELECT row_to_json(row) FROM " + \
-                    "(SELECT " + columns + ", ST_AsGeoJSON(" + geojsonField + \
-                    ") as geojson FROM " + datasetName + ") row"
-            else:
-                query = "SELECT row_to_json(row) FROM " + \
-                    "(SELECT " + columns + " FROM " + datasetName + ") row"
-
+            query = "SELECT row_to_json(row) FROM " + \
+                "(SELECT " + columns + ", ST_AsGeoJSON(" + geojsonField + \
+                ") as geojson FROM " + datasetName + ") row"
+            cursor = self.db.cursor()
             cursor.execute(query)
             result = cursor.fetchall()
 
             if result == None:
+                self.db.close()
                 raise Data_Exception
 
-            response = []
-            for elem in result:
-                jsonStr = json.dumps(elem, ensure_ascii=True).encode('UTF-8')
-                response.append(json.loads(jsonStr)[0])
-
-            if geojsonField != None:
-                for elem in response:
-                    elem['geojson'] = json.loads(elem['geojson'])
-
             self.db.close()
-            return response
+            return result
         except Exception:
             raise Data_Exception(
                 Exception('Error! into fetch data set ' + datasetName))
