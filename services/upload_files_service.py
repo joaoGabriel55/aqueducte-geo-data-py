@@ -6,16 +6,7 @@ import random
 import shutil
 
 from utils.properties import getDbHost, getDbPort, getDbUser, getDbPassword, getDbName
-
-TEMP_FOLDER = 'upload_temp_data'
-
-
-def checkIfFolderExists(folder):
-    if pathlib.Path(folder).exists() == False:
-        os.mkdir(folder)
-        return False
-    return True
-
+from utils.folder_files import checkIfFolderExists, TEMP_FOLDER
 
 def allowedFilesType(filename):
     types = ['cpg', 'dbf', 'prj', 'sbn', 'sbx', 'shp', 'shp.xml', 'shx']
@@ -52,13 +43,13 @@ class Upload_Files_Service():
                     if file and allowedFilesType(file.filename):
                         file.save(os.path.join(path, file.filename))
                     else:
-                        shutil.rmtree(TEMP_FOLDER)
+                        shutil.rmtree(path)
                         raise Exception('Wrong type')
 
                 uploadGeoFiles(path)
         except OSError as e:
-            shutil.rmtree(TEMP_FOLDER)
+            shutil.rmtree(path)
             print("Creation of the directory %s failed" % path)
             raise Exception(e.strerror)
 
-        shutil.rmtree(TEMP_FOLDER)
+        shutil.rmtree(path)
