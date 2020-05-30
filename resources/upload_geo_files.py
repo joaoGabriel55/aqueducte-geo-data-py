@@ -11,7 +11,6 @@ class Upload_Geo_Files(Resource):
 
         try:
             service.uploadFiles(self, files)
-            data = request.get_json()  # status code
-            return make_response(jsonify({'data': data}), 201)
+            return make_response(jsonify({'data': 'imported geo files'}), 201)
         except OSError as e:
-            return make_response(jsonify({'data': e.strerror}), 500)
+            return make_response(jsonify({'error': e.strerror}), 500)
