@@ -23,7 +23,16 @@ class Geo_Data_Repository(object):
             response = []
             for elem in result:
                 jsonStr = json.dumps(elem, ensure_ascii=False)
-                response.append(json.loads(jsonStr)[1])
+                table = json.loads(jsonStr)[1]
+                if table != 'spatial_ref_sys':
+                    sqlCount = 'SELECT count(*) from ' + table
+                    cursor.execute(sqlCount)
+                    count = cursor.fetchone()
+                    elem = {
+                        'dataset': table,
+                        'num_elements': count[0]
+                    }
+                    response.append(elem)
 
             self.db.close()
             return response

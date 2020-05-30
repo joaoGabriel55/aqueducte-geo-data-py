@@ -10,6 +10,8 @@ from utils.properties import getAqueconnectUrl
 from exceptions.data_exception import Data_Exception
 from repositories.geo_data_repository import Geo_Data_Repository
 
+from flask import request
+
 
 class Geo_Data_Service(object):
 
@@ -83,11 +85,17 @@ class Geo_Data_Service(object):
                 }
             )
 
+            sgeol_instance = request.headers.get('sgeol-instance')
+            user_token = request.headers.get('user-token')
+            app_token = request.headers.get('application-token')
+
             headers = {
-                'application-token': 'token',
-                'user-token': 'token',
+                'application-token': app_token,
+                'user-token': user_token,
+                'sgeol-instance': sgeol_instance,
                 'Content-Type': mp_encoder.content_type
             }
+
             response = requests.post(uri, data=mp_encoder, headers=headers)
             shutil.rmtree(path)
             if response.status_code != 201:
