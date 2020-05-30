@@ -11,6 +11,10 @@ class Authentication():
             }
             uri = sgeol_instance + "/idm/users/info"
             response = requests.get(uri, headers=headers)
+
+            if response.status_code != 200:
+                return False
+
             user_roles = response.json()['roles']
             for role in user_roles:
                 if 'gerente' in role['name']:
