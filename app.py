@@ -35,4 +35,4 @@ api.add_resource(Import_HDFS_Geo_Data_Csv,
                  '/geo-data/<dataset_name>/user-id/<user_id>/import/<hash_folder>')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=1028)
+    app.run(host='0.0.0.0', port=3333)
