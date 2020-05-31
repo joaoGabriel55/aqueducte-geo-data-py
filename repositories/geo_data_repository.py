@@ -14,7 +14,14 @@ class Geo_Data_Repository(object):
         try:
             showTablesQuery = "SELECT * FROM pg_catalog.pg_tables WHERE schemaname = 'public'"
             cursor = self.db.cursor()
-            cursor.execute(showTablesQuery)
+
+            try:
+                cursor.execute(showTablesQuery)
+            except Exception as e:
+                print(e.message)
+                conn = dbConnection()
+                cursor = conn.cursor()
+
             result = cursor.fetchall()
 
             if result == None:

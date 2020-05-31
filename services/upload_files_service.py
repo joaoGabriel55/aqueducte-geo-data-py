@@ -1,12 +1,13 @@
 import os
 import subprocess
-import pathlib
 
 import random
 import shutil
 
 from utils.properties import getDbHost, getDbPort, getDbUser, getDbPassword, getDbName
 from utils.folder_files import checkIfFolderExists, TEMP_FOLDER
+from services.geo_data_service import Geo_Data_Service
+
 
 def allowedFilesType(filename):
     types = ['cpg', 'dbf', 'prj', 'sbn', 'sbx', 'shp', 'shp.xml', 'shx']
@@ -29,18 +30,26 @@ def uploadGeoFiles(folder):
         raise Exception("Import files error!")
 
 
-class Upload_Files_Service():
+class Upload_Files_Service(object):
+
+    geo_data_service = None
+
+    def __init__(self):
+        self.geo_data_service = Geo_Data_Service()
 
     def uploadFiles(self, files):
         hash = random.getrandbits(128)
         checkIfFolderExists(TEMP_FOLDER)
-
         path = TEMP_FOLDER + "/" + str(hash)
-        print(path)
+
         try:
             if checkIfFolderExists(path) == False:
                 for file in files:
                     if file and allowedFilesType(file.filename):
+                        #datasets = self.geo_data_service.getAllDataSets()
+                        #for data in datasets:
+                        #    if file.filename in data.dataset:
+                        #        print(data.dataset)
                         file.save(os.path.join(path, file.filename))
                     else:
                         shutil.rmtree(path)
