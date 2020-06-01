@@ -22,8 +22,8 @@ def auth_filter():
     is_auth = Authentication.authenticate(
         sgeol_instance, user_token, app_token
     )
-    if is_auth == False:
-        return make_response(jsonify({'message': 'You do not have \'gerente\' role to access API'}), 401)
+    # if is_auth == False:
+    #     return make_response(jsonify({'message': 'You do not have \'gerente\' role to access API'}), 401)
 
 
 api.add_resource(Upload_Geo_Files, '/upload-geo-files')

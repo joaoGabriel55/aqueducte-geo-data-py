@@ -5,22 +5,13 @@ from utils.db_connection import dbConnection
 
 class Geo_Data_Repository(object):
 
-    db = None
-
-    def __init__(self):
-        self.db = dbConnection()
-
     def showAllDataSets(self):
         try:
             showTablesQuery = "SELECT * FROM pg_catalog.pg_tables WHERE schemaname = 'public'"
-            cursor = self.db.cursor()
+            db = dbConnection()
+            cursor = db.cursor()
 
-            try:
-                cursor.execute(showTablesQuery)
-            except Exception as e:
-                print(e.message)
-                conn = dbConnection()
-                cursor = conn.cursor()
+            cursor.execute(showTablesQuery)
 
             result = cursor.fetchall()
 
@@ -41,7 +32,7 @@ class Geo_Data_Repository(object):
                     }
                     response.append(elem)
 
-            self.db.close()
+            db.close()
             return response
         except Exception:
             raise Data_Exception(Exception('Error! into fetch all datasets'))
@@ -50,8 +41,8 @@ class Geo_Data_Repository(object):
         queryColumns = "SELECT column_name " +\
             "FROM information_schema.columns " +\
             "WHERE table_name = '" + datasetName + "'"
-
-        cursor = self.db.cursor()
+        db = dbConnection()
+        cursor = db.cursor()
         cursor.execute(queryColumns)
         columns = cursor.fetchall()
 
@@ -63,6 +54,7 @@ class Geo_Data_Repository(object):
             jsonStr = json.dumps(column, ensure_ascii=False)
             response.append(json.loads(jsonStr)[0])
 
+        db.close()
         return response
 
     def getDataSet(self, datasetName, geojsonField):
@@ -75,15 +67,16 @@ class Geo_Data_Repository(object):
             query = "SELECT row_to_json(row) FROM " + \
                 "(SELECT " + columns + ", ST_AsGeoJSON(" + geojsonField + \
                 ") as geojson FROM " + datasetName + ") row"
-            cursor = self.db.cursor()
+            db = dbConnection()
+            cursor = db.cursor()
             cursor.execute(query)
             result = cursor.fetchall()
 
             if result == None:
-                self.db.close()
+                db.close()
                 raise Data_Exception
 
-            self.db.close()
+            db.close()
             return result
         except Exception:
             raise Data_Exception(
@@ -91,10 +84,11 @@ class Geo_Data_Repository(object):
 
     def deleteDataSet(self, datasetName):
         try:
-            dropTable = "DROP TABLE " + datasetName
-            cursor = self.db.cursor()
+            dropTable = "DROP TABLE IF EXISTS " + datasetName
+            db = dbConnection()
+            cursor = db.cursor()
             cursor.execute(dropTable)
-            self.db.commit()
-            self.db.close()
+            db.commit()
+            db.close()
         except Exception:
             raise Data_Exception(Exception('Error! into delete dataset'))

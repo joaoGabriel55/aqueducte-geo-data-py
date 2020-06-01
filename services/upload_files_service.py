@@ -6,7 +6,7 @@ import shutil
 
 from utils.properties import getDbHost, getDbPort, getDbUser, getDbPassword, getDbName
 from utils.folder_files import checkIfFolderExists, TEMP_FOLDER
-from services.geo_data_service import Geo_Data_Service
+from repositories.geo_data_repository import Geo_Data_Repository
 
 
 def allowedFilesType(filename):
@@ -24,18 +24,14 @@ def uploadGeoFiles(folder):
         " dbname=" + getDbName() + \
         " password=" + getDbPassword() + \
         "' " + folder + "/"
+    print(importCmd)
     result = os.system(importCmd)
     if result != 0:
-        shutil.rmtree(TEMP_FOLDER)
+        shutil.rmtree(folder)
         raise Exception("Import files error!")
 
 
 class Upload_Files_Service(object):
-
-    geo_data_service = None
-
-    def __init__(self):
-        self.geo_data_service = Geo_Data_Service()
 
     def uploadFiles(self, files):
         hash = random.getrandbits(128)
@@ -44,12 +40,16 @@ class Upload_Files_Service(object):
 
         try:
             if checkIfFolderExists(path) == False:
+                repository = Geo_Data_Repository()
+                datasets = repository.showAllDataSets()
                 for file in files:
                     if file and allowedFilesType(file.filename):
-                        #datasets = self.geo_data_service.getAllDataSets()
-                        #for data in datasets:
-                        #    if file.filename in data.dataset:
-                        #        print(data.dataset)
+                        if len(datasets) != 0:
+                            for data in datasets:
+                                dataset = data['dataset']
+                                if dataset in file.filename:
+                                    repository.deleteDataSet(dataset)
+
                         file.save(os.path.join(path, file.filename))
                     else:
                         shutil.rmtree(path)
