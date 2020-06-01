@@ -69,15 +69,14 @@ class Geo_Data_Service(object):
         data_file.close()
         return hash
 
-    def importaDatasetCsv(self, user_id, hash_folder, dataset_name):
+    def importDatasetCsv(self, task_id, user_id, hash_folder, dataset_name):
         checkIfFolderExists(TEMP_FOLDER)
 
-        task_id = str(1)
         path = TEMP_FOLDER + '/' + str(hash_folder)
         with open(path + "/" + dataset_name + ".csv", "rb") as a_file:
             print(a_file)
             uri = getAqueconnectUrl() + 'file/' + user_id + '/' + \
-                task_id + "?path=/" + dataset_name + '.csv'
+                task_id + "?path=/geo-data-files/" + dataset_name + '.csv'
 
             mp_encoder = MultipartEncoder(
                 fields={

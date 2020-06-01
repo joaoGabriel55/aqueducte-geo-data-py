@@ -58,10 +58,10 @@ class Import_HDFS_Geo_Data_Csv(Resource):
     def __init__(self):
         self.service = Geo_Data_Service()
 
-    def post(self, user_id, hash_folder, dataset_name):
+    def post(self, task_id, user_id, hash_folder, dataset_name):
         try:
-            self.service.importaDatasetCsv(
-                user_id, hash_folder, dataset_name
+            self.service.importDatasetCsv(
+                task_id, user_id, hash_folder, dataset_name
             )
             return make_response(jsonify({'data': 'imported'}), 200)
         except Exception:

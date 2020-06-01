@@ -22,8 +22,8 @@ def auth_filter():
     is_auth = Authentication.authenticate(
         sgeol_instance, user_token, app_token
     )
-    if is_auth == False:
-        return make_response(jsonify({'message': 'You do not have \'gerente\' role to access API'}), 401)
+    # if is_auth == False:
+    #     return make_response(jsonify({'message': 'You do not have \'gerente\' role to access API'}), 401)
 
 
 api.add_resource(Upload_Geo_Files, '/upload-geo-files')
@@ -31,8 +31,10 @@ api.add_resource(Geo_Data, '/geo-data')
 api.add_resource(Geo_Data_Fields, '/geo-data/<dataset_name>/fields')
 api.add_resource(Geo_Data_Delete_By_Name, '/geo-data/<dataset_name>')
 api.add_resource(Generate_Geo_Data_Csv, '/geo-data/<dataset_name>/csv')
-api.add_resource(Import_HDFS_Geo_Data_Csv,
-                 '/geo-data/<dataset_name>/user-id/<user_id>/import/<hash_folder>')
+api.add_resource(
+    Import_HDFS_Geo_Data_Csv,
+    '/geo-data/<dataset_name>/task-id/<task_id>/user-id/<user_id>/import/<hash_folder>'
+)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=1028)
+    app.run(host='0.0.0.0', port=3333)
