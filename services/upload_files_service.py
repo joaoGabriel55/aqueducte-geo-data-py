@@ -9,11 +9,21 @@ from utils.folder_files import checkIfFolderExists, TEMP_FOLDER
 from repositories.geo_data_repository import Geo_Data_Repository
 
 
-def allowedFilesType(filename):
-    types = ['cpg', 'dbf', 'prj', 'sbn', 'sbx', 'shp', 'shp.xml', 'shx']
+def allowedFilesType(files):
+    types = ['.cpg', '.dbf', '.prj', '.sbn',
+             '.sbx', '.shp', '.shp.xml', '.shx']
+
+    # Allow only unique files
+    validTypes = set()
     for typeFile in types:
-        if typeFile in str(filename).lower():
-            return True
+        for file in files:
+            if typeFile in str(file.filename).lower():
+                validTypes.add(typeFile)
+
+    if len(types) == len(validTypes):
+        return True
+
+    return False
 
 
 def uploadGeoFiles(folder):
@@ -34,16 +44,19 @@ def uploadGeoFiles(folder):
 class Upload_Files_Service(object):
 
     def uploadFiles(self, files):
-        hash = random.getrandbits(128)
-        checkIfFolderExists(TEMP_FOLDER)
-        path = TEMP_FOLDER + "/" + str(hash)
-
         try:
+            if allowedFilesType(files) == False:
+                raise Exception('Wrong type')
+
+            hash = random.getrandbits(128)
+            checkIfFolderExists(TEMP_FOLDER)
+            path = TEMP_FOLDER + "/" + str(hash)
+
             if checkIfFolderExists(path) == False:
                 repository = Geo_Data_Repository()
                 datasets = repository.showAllDataSets()
                 for file in files:
-                    if file and allowedFilesType(file.filename):
+                    if file:
                         if len(datasets) != 0:
                             for data in datasets:
                                 dataset = data['dataset']
