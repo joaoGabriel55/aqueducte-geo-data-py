@@ -23,7 +23,7 @@ def uploadGeoFiles(folder):
         " user=" + getDbUser() + \
         " dbname=" + getDbName() + \
         " password=" + getDbPassword() + \
-        "' " + folder + "/"
+        "' -nlt PROMOTE_TO_MULTI " + folder + "/"
     print(importCmd)
     result = os.system(importCmd)
     if result != 0:
