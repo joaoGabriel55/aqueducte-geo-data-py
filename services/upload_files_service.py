@@ -10,8 +10,7 @@ from repositories.geo_data_repository import Geo_Data_Repository
 
 
 def allowedFilesType(files):
-    types = ['.cpg', '.dbf', '.prj', '.sbn',
-             '.sbx', '.shp', '.shp.xml', '.shx']
+    types = ['.dbf', '.prj', '.shp', '.shx']
 
     # Allow only unique files
     validTypes = set()
@@ -33,7 +32,7 @@ def uploadGeoFiles(folder):
         " user=" + getDbUser() + \
         " dbname=" + getDbName() + \
         " password=" + getDbPassword() + \
-        "' -nlt PROMOTE_TO_MULTI " + folder + "/"
+        "' -nlt PROMOTE_TO_MULTI " + folder + "/ -skipfailures"
     print(importCmd)
     result = os.system(importCmd)
     if result != 0:
@@ -56,6 +55,8 @@ class Upload_Files_Service(object):
                 repository = Geo_Data_Repository()
                 datasets = repository.showAllDataSets()
                 for file in files:
+                    file.filename = file.filename.replace(" ", "_")
+                    print(file.filename)
                     if file:
                         if len(datasets) != 0:
                             for data in datasets:
