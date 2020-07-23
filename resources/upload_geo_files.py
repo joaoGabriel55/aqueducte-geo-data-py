@@ -17,4 +17,5 @@ class Upload_Geo_Files(Resource):
             self.service.uploadFiles(files)
             return make_response(jsonify({'data': 'imported geo files'}), 201)
         except OSError as e:
-            return make_response(jsonify({'error': e.strerror}), 500)
+            print(e)
+            return make_response(jsonify({'error': 'imported geo files'}), 500)
