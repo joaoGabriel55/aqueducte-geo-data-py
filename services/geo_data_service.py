@@ -20,6 +20,24 @@ class Geo_Data_Service(object):
     def __init__(self):
         self.repository = Geo_Data_Repository()
 
+    def getDatasetsHistory(self):
+        return self.repository.selectDatasetsHistory()
+
+    def createDatasetHistory(self, dataset):
+        self.repository.createDatasetHistoryTable()
+        datasets = self.repository.showAllDataSets()
+        for elem in datasets:
+            if(dataset == elem['dataset']):
+                print(elem['dataset'], elem['num_elements'])
+                self.repository.insertDatasetHistory(
+                    elem['dataset'], elem['num_elements'])
+
+    def deleteDatasetHistory(self, id):
+        self.repository.deleteDatasetHistory(id)
+
+    def deleteAllDatasetHistory(self):
+        self.repository.dropTableDatasetHistory()
+
     def getAllDataSets(self):
         try:
             return self.repository.showAllDataSets()
@@ -37,6 +55,8 @@ class Geo_Data_Service(object):
                 Exception("Error get dataset " + datasetName))
 
     def generateDatasetCsv(self, datasetName, geojsonField):
+        if datasetName == 'dataset_history':
+            raise Exception("Wrong dataset name!")
         if datasetName == None or datasetName == '':
             raise Exception("Dataset name must be informed")
         if geojsonField == None or geojsonField == '':
@@ -103,9 +123,7 @@ class Geo_Data_Service(object):
     def deleteDataSet(self, datasetName):
         try:
             if datasetName == None or datasetName == '':
-                raise Data_Exception(
-                    Exception("Dataset name must be informed"))
+                raise Exception("Dataset name must be informed")
             return self.repository.deleteDataSet(datasetName)
         except Exception:
-            raise Data_Exception(
-                Exception("Error delete dataset " + datasetName))
+            raise Exception("Error delete dataset " + datasetName)

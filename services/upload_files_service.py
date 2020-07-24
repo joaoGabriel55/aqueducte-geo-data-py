@@ -37,7 +37,6 @@ def uploadGeoFiles(folder):
     result = os.system(importCmd)
     if result != 0:
         shutil.rmtree(folder)
-        raise Exception("Import files error!")
 
 
 class Upload_Files_Service(object):
@@ -70,6 +69,8 @@ class Upload_Files_Service(object):
                         raise Exception('Wrong type')
 
                 uploadGeoFiles(path)
+                actualDatasets = repository.showAllDataSets()
+                return actualDatasets
         except OSError as e:
             shutil.rmtree(path)
             print("Creation of the directory %s failed" % path)
