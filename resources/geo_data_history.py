@@ -35,3 +35,18 @@ class Geo_Data_History_Delete_By_Id(Resource):
         except Exception as e:
             print(e)
             return make_response(jsonify({'error': 'Internal error in delete history ' + id}), 500)
+
+
+class Geo_Data_History_Delete_All(Resource):
+    service = None
+
+    def __init__(self):
+        self.service = Geo_Data_Service()
+
+    def delete(self):
+        try:
+            self.service.deleteAllDatasetHistory()
+            return make_response(jsonify({}), 204)
+        except Exception as e:
+            print(e)
+            return make_response(jsonify({'error': 'Internal error in delete history ' + id}), 500)

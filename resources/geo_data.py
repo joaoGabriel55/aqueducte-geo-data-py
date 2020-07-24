@@ -37,6 +37,30 @@ class Geo_Data_Fields(Resource):
             return make_response(jsonify({'error': 'Internal error in retrieve dataset [' + dataset_name + '] fields'}), 500)
 
 
+class Geo_Data_Delete(Resource):
+    service = None
+
+    def __init__(self):
+        self.service = Geo_Data_Service()
+
+    def delete(self):
+        try:
+            response = {"errors": [], "success": []}
+            dataset_names = request.json
+            for dataset_name in dataset_names:
+                result = self.service.deleteDataSet(dataset_name)
+                if result:
+                    response['success'].append(dataset_name)
+                else:
+                    response['errors'].append(dataset_name)
+
+            
+                return make_response(jsonify(response), 200)
+        except Exception as e:
+            print(e)
+            return make_response(jsonify({'error': 'Internal error in retrieve dataset [' + dataset_name + '] fields'}), 500)
+
+
 class Generate_Import_Geo_Data_Csv(Resource):
     service = None
 
@@ -48,13 +72,13 @@ class Generate_Import_Geo_Data_Csv(Resource):
         datasets = request.json
         for elem in datasets:
             try:
-                # hash = self.service.generateDatasetCsv(
-                #     elem['dataset'], elem['geojson_field']
-                # )
+                hash = self.service.generateDatasetCsv(
+                    elem['dataset'], elem['geojson_field']
+                )
                 try:
-                    # self.service.importDatasetCsv(
-                    #     task_id, user_id, hash, elem['dataset']
-                    # )
+                    self.service.importDatasetCsv(
+                        task_id, user_id, hash, elem['dataset']
+                    )
 
                     self.service.createDatasetHistory(elem['dataset'])
                     self.service.deleteDataSet(elem['dataset'])
@@ -64,7 +88,8 @@ class Generate_Import_Geo_Data_Csv(Resource):
                     print(e)
                     response['errors'].append(
                         {"dataset": elem['dataset'], "error": 'Error at importDatasetCsv method'})
-            except Exception:
+            except Exception as e:
+                print(e)
                 response['errors'].append(
                     {"dataset": elem['dataset'], "error": 'Error at generateDatasetCsv method'})
 

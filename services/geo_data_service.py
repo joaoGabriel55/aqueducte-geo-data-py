@@ -35,6 +35,9 @@ class Geo_Data_Service(object):
     def deleteDatasetHistory(self, id):
         self.repository.deleteDatasetHistory(id)
 
+    def deleteAllDatasetHistory(self):
+        self.repository.dropTableDatasetHistory()
+
     def getAllDataSets(self):
         try:
             return self.repository.showAllDataSets()
@@ -121,6 +124,6 @@ class Geo_Data_Service(object):
         try:
             if datasetName == None or datasetName == '':
                 raise Exception("Dataset name must be informed")
-            self.repository.deleteDataSet(datasetName)
+            return self.repository.deleteDataSet(datasetName)
         except Exception:
             raise Exception("Error delete dataset " + datasetName)

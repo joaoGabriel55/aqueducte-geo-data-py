@@ -2,7 +2,8 @@ import json
 from datetime import datetime as dt
 
 from exceptions.data_exception import Data_Exception
-import psycopg2, time
+import psycopg2
+import time
 from utils.db_connection import dbConnection
 
 
@@ -28,7 +29,8 @@ class Geo_Data_Repository(object):
             db = dbConnection()
             cursor = db.cursor()
             now = dt.now()
-            print(now.year, now.month, now.day, now.hour, now.minute, now.second)
+            print(now.year, now.month, now.day,
+                  now.hour, now.minute, now.second)
             cursor.execute("INSERT INTO public.dataset_history (dataset_name, num_elements, date_upload) VALUES(%s, %s, %s)",
                            (dataset_name, num_elements, psycopg2.Timestamp(now.year, now.month, now.day, now.hour, now.minute, now.second)))
             db.commit()
@@ -51,8 +53,21 @@ class Geo_Data_Repository(object):
             print(e)
             raise Exception('Error! into delete dataset_history')
 
+    def dropTableDatasetHistory(self):
+        try:
+            db = dbConnection()
+            cursor = db.cursor()
+            cursor.execute(
+                "DROP TABLE public.dataset_history;")
+            db.commit()
+            db.close()
+            cursor.close()
+        except Exception as e:
+            print(e)
+            raise Exception('Error! into delete dataset_history table')
+
     def datetimeConverter(self, o):
-        if isinstance(o, datetime.datetime):
+        if isinstance(o, dt):
             return o.__str__()
 
     def selectDatasetsHistory(self):
@@ -169,7 +184,7 @@ class Geo_Data_Repository(object):
             datasets = self.showAllDataSets()
             datasets = list(map(lambda el: el['dataset'], datasets))
             if datasetName not in datasets:
-                raise Exception(datasetName + ' not exists!')
+                return False
 
             dropTable = "DROP TABLE IF EXISTS " + datasetName
             db = dbConnection()
@@ -177,5 +192,6 @@ class Geo_Data_Repository(object):
             cursor.execute(dropTable)
             db.commit()
             db.close()
+            return True
         except psycopg2.Error as e:
             raise Exception('Error! into delete dataset')
