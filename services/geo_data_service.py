@@ -20,8 +20,8 @@ class Geo_Data_Service(object):
     def __init__(self):
         self.repository = Geo_Data_Repository()
 
-    def getDatasetsHistory(self):
-        return self.repository.selectDatasetsHistory()
+    def getDatasetsHistory(self, limit):
+        return self.repository.selectDatasetsHistory(limit)
 
     def createDatasetHistory(self, dataset):
         self.repository.createDatasetHistoryTable()
