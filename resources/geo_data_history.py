@@ -15,7 +15,10 @@ class Geo_Data_History(Resource):
 
     def get(self):
         try:
-            result = self.service.getDatasetsHistory()
+            limit = request.args.get('limit')
+            if limit == None:
+                return make_response(jsonify({'error': '\"limit\" param must be informed'}), 400)
+            result = self.service.getDatasetsHistory(limit)
             return make_response(jsonify(result), 200)
         except Exception as e:
             print(e)

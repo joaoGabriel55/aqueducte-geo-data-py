@@ -70,12 +70,12 @@ class Geo_Data_Repository(object):
         if isinstance(o, dt):
             return o.__str__()
 
-    def selectDatasetsHistory(self):
+    def selectDatasetsHistory(self, limit):
         try:
             db = dbConnection()
             cursor = db.cursor()
             cursor.execute(
-                "SELECT * FROM public.dataset_history ORDER BY date_upload DESC;")
+                "SELECT * FROM public.dataset_history ORDER BY date_upload DESC LIMIT " + limit + ";")
             rows = cursor.fetchall()
 
             if rows == None:
