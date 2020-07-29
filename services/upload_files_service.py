@@ -70,6 +70,9 @@ class Upload_Files_Service(object):
 
                 uploadGeoFiles(path)
                 actualDatasets = repository.showAllDataSets()
+                for data in actualDatasets:
+                    if data['num_elements'] == 0:
+                        repository.deleteDataSet(data['dataset'])
                 return actualDatasets
         except OSError as e:
             shutil.rmtree(path)
