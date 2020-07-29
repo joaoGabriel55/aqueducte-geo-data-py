@@ -27,7 +27,10 @@ class Upload_Geo_Files(Resource):
                 isUploaded = False
                 for elem in result:
                     if elem['dataset'] == file:
-                        response['success'].append(elem['dataset'])
+                        if elem['num_elements'] == 0:
+                            response['errors'].append(elem['dataset'])
+                        else:
+                            response['success'].append(elem['dataset'])
                         isUploaded = True
                         break
                 if isUploaded == False:

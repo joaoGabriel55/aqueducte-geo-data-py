@@ -31,6 +31,8 @@ class Geo_Data_Fields(Resource):
     def get(self, dataset_name):
         try:
             data = self.service.getDataSetFields(dataset_name)
+            if len(data) == 0:
+                return make_response(jsonify({'error': 'Any field'}), 400)
             return make_response(jsonify({'data': data}), 200)
         except Exception as e:
             print(e)
