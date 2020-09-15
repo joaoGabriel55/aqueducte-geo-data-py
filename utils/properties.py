@@ -26,3 +26,9 @@ def getDbName():
 
 def getAqueconnectUrl():
     return str(os.getenv("AQUECONNECT_URL"))
+
+def getAqueducteUrl():
+    return str(os.getenv("AQUEDUCTE_URL"))
+
+def getAqueducteHashConfigValue():
+    return str(os.getenv("AQUEDUCTE_HASH_CONFIG_VALUE"))

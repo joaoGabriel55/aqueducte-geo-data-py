@@ -6,7 +6,7 @@ import shutil
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 from utils.folder_files import checkIfFolderExists, TEMP_FOLDER
-from utils.properties import getAqueconnectUrl
+from utils.properties import getAqueconnectUrl, getAqueducteHashConfigValue
 from exceptions.data_exception import Data_Exception
 from repositories.geo_data_repository import Geo_Data_Repository
 
@@ -103,15 +103,10 @@ class Geo_Data_Service(object):
                     'file': (dataset_name + '.csv', a_file, 'text/csv'),
                 }
             )
-
-            sgeol_instance = request.headers.get('sgeol-instance')
-            user_token = request.headers.get('user-token')
-            app_token = request.headers.get('application-token')
+            hash_config_value = getAqueducteHashConfigValue()
 
             headers = {
-                'application-token': app_token,
-                'user-token': user_token,
-                'sgeol-instance': sgeol_instance,
+                'hash-config': hash_config_value,
                 'Content-Type': mp_encoder.content_type
             }
 
