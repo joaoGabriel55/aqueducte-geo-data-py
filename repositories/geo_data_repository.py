@@ -131,28 +131,33 @@ class Geo_Data_Repository(object):
 
             db.close()
             return response
-        except Exception:
+        except Exception as e:
+            print(e)
             raise Data_Exception(Exception('Error! into fetch all datasets'))
 
     def getDataSetFields(self, datasetName):
-        queryColumns = "SELECT column_name " +\
-            "FROM information_schema.columns " +\
-            "WHERE table_name = '" + datasetName + "'"
-        db = dbConnection()
-        cursor = db.cursor()
-        cursor.execute(queryColumns)
-        columns = cursor.fetchall()
+        try:
+            queryColumns = "SELECT column_name " +\
+                "FROM information_schema.columns " +\
+                "WHERE table_name = '" + datasetName + "'"
+            db = dbConnection()
+            cursor = db.cursor()
+            cursor.execute(queryColumns)
+            columns = cursor.fetchall()
 
-        if columns == None:
-            raise Data_Exception
+            if columns == None:
+                raise Data_Exception
 
-        response = []
-        for column in columns:
-            jsonStr = json.dumps(column, ensure_ascii=False)
-            response.append(json.loads(jsonStr)[0])
+            response = []
+            for column in columns:
+                jsonStr = json.dumps(column, ensure_ascii=False)
+                response.append(json.loads(jsonStr)[0])
 
-        db.close()
-        return response
+            db.close()
+            return response
+        except Exception as e:
+            print(e)
+            raise Data_Exception(Exception('Error! into fetch dataset fields'))
 
     def getDataSet(self, datasetName, geojsonField):
         try:
@@ -175,7 +180,8 @@ class Geo_Data_Repository(object):
 
             db.close()
             return result
-        except Exception:
+        except Exception as e:
+            print(e)
             raise Data_Exception(
                 Exception('Error! into fetch data set ' + datasetName))
 
@@ -194,4 +200,5 @@ class Geo_Data_Repository(object):
             db.close()
             return True
         except psycopg2.Error as e:
+            print(e)
             raise Exception('Error! into delete dataset')

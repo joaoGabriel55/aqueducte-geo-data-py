@@ -21,27 +21,46 @@ class Geo_Data_Service(object):
         self.repository = Geo_Data_Repository()
 
     def getDatasetsHistory(self, limit):
-        return self.repository.selectDatasetsHistory(limit)
+        try:
+            return self.repository.selectDatasetsHistory(limit)
+        except Exception as e:
+            print(e)
+            raise Data_Exception(Exception("Error get datasets history"))
 
     def createDatasetHistory(self, dataset):
-        self.repository.createDatasetHistoryTable()
-        datasets = self.repository.showAllDataSets()
-        for elem in datasets:
-            if(dataset == elem['dataset']):
-                print(elem['dataset'], elem['num_elements'])
-                self.repository.insertDatasetHistory(
-                    elem['dataset'], elem['num_elements'])
+        try:
+            self.repository.createDatasetHistoryTable()
+            datasets = self.repository.showAllDataSets()
+            for elem in datasets:
+                if(dataset == elem['dataset']):
+                    print(elem['dataset'], elem['num_elements'])
+                    self.repository.insertDatasetHistory(
+                        elem['dataset'], elem['num_elements'])
+        except Exception as e:
+            print(e)
+            raise Data_Exception(
+                Exception("Error create dataset history - " + dataset))
 
     def deleteDatasetHistory(self, id):
-        self.repository.deleteDatasetHistory(id)
+        try:
+            self.repository.deleteDatasetHistory(id)
+        except Exception as e:
+            print(e)
+            raise Data_Exception(
+                Exception("Error delete dataset history - " + id))
 
     def deleteAllDatasetHistory(self):
-        self.repository.dropTableDatasetHistory()
+        try:
+            self.repository.dropTableDatasetHistory()
+        except Exception as e:
+            print(e)
+            raise Data_Exception(Exception("Error delete all dataset history"))
 
     def getAllDataSets(self):
         try:
             return self.repository.showAllDataSets()
-        except Exception:
+        except Exception as e:
+            print(e)
             raise Data_Exception(Exception("Error get all datasets"))
 
     def getDataSetFields(self, datasetName):
@@ -50,7 +69,8 @@ class Geo_Data_Service(object):
                 raise Data_Exception(
                     Exception("Error delete dataset " + datasetName))
             return self.repository.getDataSetFields(datasetName)
-        except Exception:
+        except Exception as e:
+            print(e)
             raise Data_Exception(
                 Exception("Error get dataset " + datasetName))
 
@@ -120,5 +140,6 @@ class Geo_Data_Service(object):
             if datasetName == None or datasetName == '':
                 raise Exception("Dataset name must be informed")
             return self.repository.deleteDataSet(datasetName)
-        except Exception:
+        except Exception as e:
+            print(e)
             raise Exception("Error delete dataset " + datasetName)
