@@ -9,7 +9,7 @@ Flask-Paranoid==0.2.0
 Flask-Principal==0.4.0
 Flask-RESTful==0.3.8
 flask-restplus==0.13.0
-Flask-Security-Too==3.4.2
+Flask-Security-Too==3.4.5
 Flask-SQLAlchemy==2.1
 Flask-WTF==0.14.2
 GDAL>=2.2,<3.0
