@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 # OR, the same with increased verbosity
 load_dotenv(verbose=True)
 
+
 def getDbHost():
     return str(os.getenv("DB_HOST"))
 
@@ -26,3 +27,11 @@ def getDbName():
 
 def getAqueconnectUrl():
     return str(os.getenv("AQUECONNECT_URL"))
+
+
+def getAqueducteUrl():
+    return str(os.getenv("AQUEDUCTE_URL"))
+
+
+def getAqueducteHashConfigValue():
+    return str(os.getenv("AQUEDUCTE_HASH_CONFIG_VALUE"))

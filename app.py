@@ -12,20 +12,15 @@ api = Api(app)
 
 @app.before_request
 def auth_filter():
-    sgeol_instance = request.headers.get('sgeol-instance')
-    user_token = request.headers.get('user-token')
-    app_token = request.headers.get('application-token')
-    if user_token == None or sgeol_instance == None or app_token == None:
+    hash_config = request.headers.get('hash-config')
+    if hash_config == None:
         return make_response(
-            jsonify(
-                {'message': '\'application-token\', \'user-token\' or \'sgeol-instance\' is not present.'}
-            ), 401)
+            jsonify({'message': '\'hash-config\' header is not present.'}), 401)
 
-    is_auth = Authentication.authenticate(
-        sgeol_instance, user_token, app_token
-    )
+    is_auth = Authentication.authenticate(hash_config)
+
     if is_auth == False:
-        return make_response(jsonify({'message': 'You do not have \'gerente\' role to access API'}), 401)
+        return make_response(jsonify({'message': 'Inform a \'hash-config\'valid to access API'}), 401)
 
 
 api.add_resource(Upload_Geo_Files, '/aquegeo/upload-geo-files')

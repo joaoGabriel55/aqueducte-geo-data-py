@@ -1,24 +1,19 @@
 import requests
+from utils.properties import getAqueducteUrl, getAqueducteHashConfigValue
 
 
 class Authentication():
-    def authenticate(sgeol_instance, user_token, app_token):
+    def authenticate(hash_config):
         try:
-            headers = {
-                'application-token': app_token,
-                'user-token': user_token,
-                'sgeol_instance': sgeol_instance
-            }
-            uri = sgeol_instance + "/idm/users/info"
-            response = requests.get(uri, headers=headers)
+            uri = getAqueducteUrl() + 'external-app-config/' + hash_config
+            response = requests.get(uri)
 
             if response.status_code != 200:
                 return False
 
-            user_roles = response.json()['roles']
-            for role in user_roles:
-                if 'gerente' in role['name']:
-                    return True
+            externalAppConfig = response.json()['data']
+            if getAqueducteHashConfigValue() == externalAppConfig['hashConfig']:
+                return True
 
             return False
         except Exception:

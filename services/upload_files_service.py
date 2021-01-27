@@ -76,6 +76,7 @@ class Upload_Files_Service(object):
                 return actualDatasets
         except OSError as e:
             shutil.rmtree(path)
+            print(e)
             print("Creation of the directory %s failed" % path)
             raise Exception(e.strerror)
 
