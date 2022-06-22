@@ -13,7 +13,7 @@ Flask-Security-Too==3.4.2
 Flask-SQLAlchemy==2.1
 Flask-WTF==0.14.2
 GDAL>=2.2,<3.0
-numpy==1.18.4
+numpy==1.22.0
 python-dotenv==0.13.0
 psycopg2==2.8.5
 requests==2.22.0
